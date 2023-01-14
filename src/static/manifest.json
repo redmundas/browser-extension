@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Extension",
+  "short_name": "Extension",
+  "version": "0.0.1",
+  "icons": {},
+  "description": "Extension",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "contextMenus",
+    "scripting",
+    "storage",
+    "tabs",
+    "unlimitedStorage",
+    "webNavigation"
+  ],
+  "host_permissions": ["*://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["widget.html"],
+      "matches": ["*://*/*"]
+    }
+  ],
+  "background": {
+    "service_worker": "worker.js"
+  },
+  "action": {
+    "default_icon": {},
+    "default_title": "Extension",
+    "default_popup": "popup.html"
+  }
+}

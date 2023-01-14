@@ -1,0 +1,32 @@
+import EventEmitter from 'emittery';
+import type { Tabs, WebNavigation } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
+
+const emitter = new EventEmitter();
+
+export function addListener(name: string, listener: (data: any) => void) {
+  emitter.on(name, listener);
+}
+
+const filter = {
+  url: [{ hostEquals: 'developer.mozilla.org', schemes: ['https'] }],
+};
+browser.webNavigation.onCommitted.addListener(async (details: WebNavigation.OnCommittedDetailsType) => {
+  emitter.emit('navigation_committed', details);
+}, filter);
+
+browser.tabs.onActivated.addListener((info: Tabs.OnActivatedActiveInfoType) => {
+  emitter.emit('tab_activated', info);
+});
+
+browser.tabs.onCreated.addListener((tab: Tabs.Tab) => {
+  emitter.emit('tab_created', tab);
+});
+
+browser.tabs.onRemoved.addListener((tabId: number, info: Tabs.OnRemovedRemoveInfoType) => {
+  emitter.emit('tab_removed', { tabId, info });
+});
+
+browser.tabs.onUpdated.addListener((tabId: number, info: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
+  emitter.emit('tab_updated', { tabId, info, tab });
+});
