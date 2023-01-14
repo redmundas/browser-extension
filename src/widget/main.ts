@@ -1,17 +1,21 @@
 import { makeContext } from '../context';
+import heightObserver from '../height';
 import App from './App.svelte';
 
 function start() {
-  const target = document.createElement('div');
-  document.body.insertBefore(target, document.body.firstChild);
-
   const context = makeContext('widget');
 
   new App({
     context,
-    target,
+    target: document.body,
     props: {},
   });
+
+  window.parent.postMessage('Testing', '*');
+  const observer = heightObserver((height) => {
+    window.parent.postMessage({ height }, '*');
+  });
+  observer.observe(document.body);
 }
 
 start();
