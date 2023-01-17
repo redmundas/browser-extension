@@ -1,5 +1,5 @@
 import { makeContext } from '../context';
-import heightObserver from '../height';
+import heightObserver from '../libs/height';
 import App from './App.svelte';
 
 function start() {

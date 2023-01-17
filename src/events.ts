@@ -2,18 +2,22 @@ import EventEmitter from 'emittery';
 import type { Tabs, WebNavigation } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
+import { hostNames } from './config';
+
 const emitter = new EventEmitter();
 
 export function addListener(name: string, listener: (data: any) => void) {
   emitter.on(name, listener);
 }
 
-const filter = {
-  url: [{ hostEquals: 'developer.mozilla.org', schemes: ['https'] }],
-};
-browser.webNavigation.onCommitted.addListener(async (details: WebNavigation.OnCommittedDetailsType) => {
-  emitter.emit('navigation_committed', details);
-}, filter);
+browser.webNavigation.onCommitted.addListener(
+  async (details: WebNavigation.OnCommittedDetailsType) => {
+    emitter.emit('navigation_committed', details);
+  },
+  {
+    url: hostNames.map((hostEquals) => ({ hostEquals, schemes: ['https'] })),
+  },
+);
 
 browser.tabs.onActivated.addListener((info: Tabs.OnActivatedActiveInfoType) => {
   emitter.emit('tab_activated', info);

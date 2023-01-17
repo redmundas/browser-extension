@@ -1,5 +1,5 @@
-import { assignStyles, setAttributes } from './dom';
-import { getPath } from './utils';
+import { assignStyles, setAttributes } from './libs/dom';
+import { getPath } from './libs/utils';
 
 /**
  * content script that is injected directly into other pages.

@@ -7,10 +7,12 @@
   "scripts": {
     "start": "node esbuild.js --dev",
     "build": "node esbuild.js",
+    "check": "pnpm run check:lint && pnpm run check:svelte && pnpm run check:tsc",
     "check:lint": "eslint .",
     "check:svelte": "svelte-check",
     "check:tsc": "tsc --noEmit",
-    "fix:lint": "eslint --fix src",
+    "fix": "pnpm run fix:lint && pnpm run fix:pretty",
+    "fix:lint": "pnpm run check:lint --fix",
     "fix:pretty": "prettier -w --plugin-search-dir=. src"
   },
   "keywords": [],

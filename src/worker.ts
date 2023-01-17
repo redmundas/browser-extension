@@ -2,8 +2,8 @@ import type { WebNavigation } from 'webextension-polyfill';
 
 import Connection from './comms/main';
 import { addListener } from './events';
+import { injectScript } from './libs/utils';
 import logger from './logger';
-import { injectScript } from './utils';
 
 function start() {
   // listen for messages from popup

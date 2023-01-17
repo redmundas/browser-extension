@@ -1,9 +1,9 @@
-import { build } from 'esbuild';
 import dotenv from 'dotenv';
-import yargs from 'yargs';
-import sveltePlugin from 'esbuild-svelte';
+import { build } from 'esbuild';
 import clear from 'esbuild-plugin-clear';
 import { copy } from 'esbuild-plugin-copy';
+import sveltePlugin from 'esbuild-svelte';
+import yargs from 'yargs';
 
 const { dev } = yargs(process.argv.slice(2)).argv;
 
