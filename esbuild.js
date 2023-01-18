@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { build } from 'esbuild';
+import { build, context } from 'esbuild';
 import clear from 'esbuild-plugin-clear';
 import { copy } from 'esbuild-plugin-copy';
 import sveltePlugin from 'esbuild-svelte';
@@ -38,15 +38,16 @@ const options = {
   outdir: 'dist',
   treeShaking: true,
   legalComments: 'none',
-};
-
-if (!dev) {
-  options.plugins.push(clear('./dist'));
-}
-
-build({
-  ...options,
   minify: !dev,
   sourcemap: dev,
-  watch: dev,
-}).catch(() => process.exit(1));
+};
+
+if (dev) {
+  const ctx = await context(options);
+  await ctx.watch();
+} else {
+  await build({
+    ...options,
+    plugins: options.plugins.concat(clear('./dist')),
+  });
+}
