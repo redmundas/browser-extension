@@ -5,6 +5,8 @@ import { addListener } from './events';
 import { injectScript } from './libs/utils';
 import logger from './logger';
 
+start();
+
 function start() {
   // listen for messages from popup
   const popup = new Connection('popup');
@@ -24,5 +26,3 @@ function start() {
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);
   });
 }
-
-start();

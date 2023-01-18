@@ -1,6 +1,8 @@
 import { makeContext } from '../context';
 import App from './App.svelte';
 
+start();
+
 function start() {
   const context = makeContext('popup');
 
@@ -10,5 +12,3 @@ function start() {
     props: {},
   });
 }
-
-start();

@@ -2,6 +2,8 @@ import { makeContext } from '../context';
 import heightObserver from '../libs/height';
 import App from './App.svelte';
 
+start();
+
 function start() {
   const context = makeContext('widget');
 
@@ -17,5 +19,3 @@ function start() {
   });
   observer.observe(document.body);
 }
-
-start();

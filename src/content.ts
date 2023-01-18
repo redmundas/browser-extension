@@ -7,6 +7,8 @@ import { getPath } from './libs/utils';
  * that's why actual widget is displayed via an iframe.
  */
 
+start();
+
 function start() {
   if (document.getElementById('browser-extension')) {
     return;
@@ -51,5 +53,3 @@ function start() {
 
   document.body.append(iframe);
 }
-
-start();
