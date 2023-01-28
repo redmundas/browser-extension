@@ -1,0 +1,116 @@
+name: Extension Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.3.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --prefer-offline --frozen-lockfile
+
+      - name: Lint code
+        run: pnpm run check
+
+      - name: Fix code
+        run: pnpm run fix
+
+      - name: Ensure clean repo
+        run: |
+          if [[ ! -z "$(git status --porcelain)" ]]; then
+            echo Working directory is dirty.
+            git status --porcelain
+            exit 1
+          fi
+
+  build:
+    name: 'Build'
+    needs:
+      - validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.3.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --prefer-offline --frozen-lockfile
+
+      - name: Generate assets
+        id: assets
+        env:
+          LOG_LEVEL: 'error'
+          NODE_ENV: 'production'
+          NODE_OPTIONS: '--openssl-legacy-provider'
+        run: pnpm run build
+
+      - name: Ensure clean repo
+        run: |
+          if [[ ! -z "$(git status --porcelain)" ]]; then
+            echo Working directory is dirty.
+            git status --porcelain
+            exit 1
+          fi
+
+      - name: Archive extension
+        uses: actions/upload-artifact@v3
+        with:
+          name: extension-${{ github.run_number }}
+          path: dist/
