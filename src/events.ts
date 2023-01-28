@@ -6,6 +6,7 @@ import { hostNames } from './config';
 
 const emitter = new EventEmitter();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function addListener(name: string, listener: (data: any) => void) {
   emitter.on(name, listener);
 }

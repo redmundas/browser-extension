@@ -3,6 +3,7 @@ import type { Runtime } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
 import logger from '../logger';
+import type { Message } from './types';
 
 export default class ChildConnection {
   private emitter = new EventEmitter();
@@ -15,11 +16,11 @@ export default class ChildConnection {
     this.createConnection();
   }
 
-  public postMessage(message: any) {
+  public postMessage(message: Message) {
     this.port?.postMessage(message);
   }
 
-  public addListener(listener: (message: any) => void) {
+  public addListener(listener: (message: Message) => void) {
     this.emitter.on('message', listener);
   }
 
@@ -33,7 +34,7 @@ export default class ChildConnection {
         this.emitter.emit('disconnected');
       });
 
-      this.port.onMessage.addListener((message: any) => {
+      this.port.onMessage.addListener((message: Message) => {
         this.emitter.emit('message', message);
       });
     } catch (error) {
