@@ -11,7 +11,7 @@ dotenv.config();
 
 const options = {
   bundle: true,
-  entryPoints: ['src/popup/main.ts', 'src/widget/main.ts', 'src/content.ts', 'src/worker.ts'],
+  entryPoints: ['src/content/main.ts', 'src/popup/main.ts', 'src/widget/main.ts', 'src/worker.ts'],
   target: ['esnext'],
   loader: {
     '.png': 'dataurl',

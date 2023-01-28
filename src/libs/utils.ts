@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 
 export type ExtensionFile = 'popup.html' | 'widget.html';
-export type ContentScript = 'content.js';
+export type ContentScript = 'content/main.js';
 export type ContentStyle = never;
 
 export function getPath(file: ExtensionFile) {

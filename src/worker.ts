@@ -22,7 +22,7 @@ function start() {
 
   // inject content script into third party pages
   addListener('navigation_committed', async ({ tabId, url }: WebNavigation.OnCommittedDetailsType) => {
-    await injectScript(tabId, 'content.js');
+    await injectScript(tabId, 'content/main.js');
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);
   });
 }
