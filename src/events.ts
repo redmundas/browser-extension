@@ -4,16 +4,38 @@ import browser from 'webextension-polyfill';
 
 import { hostNames } from './config';
 
-const emitter = new EventEmitter();
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function addListener(name: string, listener: (data: any) => void) {
-  emitter.on(name, listener);
+export type EventData = any;
+export type EventType = 'navigation_committed' | 'tab_activated' | 'tab_created' | 'tab_removed' | 'tab_updated';
+export type NavigationCommittedData = WebNavigation.OnCommittedDetailsType;
+export type TabActivatedData = Tabs.OnActivatedActiveInfoType;
+export type TabCreatedData = Tabs.Tab;
+export type TabRemovedData = { tabId: number; info: Tabs.OnRemovedRemoveInfoType };
+export type TabUpdatedData = { tabId: number; info: Tabs.OnUpdatedChangeInfoType; tab: Tabs.Tab };
+
+export function addEventListener(type: 'navigation_committed', listener: (data: NavigationCommittedData) => void): void;
+export function addEventListener(type: 'tab_activated', listener: (data: TabActivatedData) => void): void;
+export function addEventListener(type: 'tab_created', listener: (data: TabCreatedData) => void): void;
+export function addEventListener(type: 'tab_removed', listener: (data: TabRemovedData) => void): void;
+export function addEventListener(type: 'tab_updated', listener: (data: TabUpdatedData) => void): void;
+export function addEventListener(type: EventType, listener: (data: EventData) => void) {
+  emitter.on(type, listener);
 }
+
+export function dispatchEvent(type: 'navigation_committed', data: NavigationCommittedData): void;
+export function dispatchEvent(type: 'tab_activated', data: TabActivatedData): void;
+export function dispatchEvent(type: 'tab_created', data: TabCreatedData): void;
+export function dispatchEvent(type: 'tab_removed', data: TabRemovedData): void;
+export function dispatchEvent(type: 'tab_updated', data: TabUpdatedData): void;
+export function dispatchEvent(type: EventType, data: EventData) {
+  emitter.emit(type, data);
+}
+
+const emitter = new EventEmitter();
 
 browser.webNavigation.onCommitted.addListener(
   async (details: WebNavigation.OnCommittedDetailsType) => {
-    emitter.emit('navigation_committed', details);
+    dispatchEvent('navigation_committed', details);
   },
   {
     url: hostNames.map((hostEquals) => ({ hostEquals, schemes: ['https'] })),
@@ -21,17 +43,17 @@ browser.webNavigation.onCommitted.addListener(
 );
 
 browser.tabs.onActivated.addListener((info: Tabs.OnActivatedActiveInfoType) => {
-  emitter.emit('tab_activated', info);
+  dispatchEvent('tab_activated', info);
 });
 
 browser.tabs.onCreated.addListener((tab: Tabs.Tab) => {
-  emitter.emit('tab_created', tab);
+  dispatchEvent('tab_created', tab);
 });
 
 browser.tabs.onRemoved.addListener((tabId: number, info: Tabs.OnRemovedRemoveInfoType) => {
-  emitter.emit('tab_removed', { tabId, info });
+  dispatchEvent('tab_removed', { tabId, info });
 });
 
 browser.tabs.onUpdated.addListener((tabId: number, info: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
-  emitter.emit('tab_updated', { tabId, info, tab });
+  dispatchEvent('tab_updated', { tabId, info, tab });
 });

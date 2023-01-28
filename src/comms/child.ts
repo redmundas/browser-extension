@@ -24,13 +24,17 @@ export default class ChildConnection {
     this.emitter.on('message', listener);
   }
 
+  public getTabId() {
+    return this.port?.sender?.tab?.id;
+  }
+
   private createConnection() {
     try {
       this.port = browser.runtime.connect({ name: this.name });
       this.emitter.emit('connected');
 
       this.port.onDisconnect.addListener(() => {
-        logger.warn('DISCONNECTED', this.name);
+        logger.debug('DISCONNECTED', this.name);
         this.emitter.emit('disconnected');
       });
 

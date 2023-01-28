@@ -43,8 +43,10 @@
     "yargs": "^17.6.2"
   },
   "dependencies": {
+    "dexie": "^3.2.3",
     "emittery": "^1.0.1",
     "loglevel": "^1.8.1",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "xstate": "^4.35.3"
   }
 }

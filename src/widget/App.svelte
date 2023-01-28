@@ -3,7 +3,9 @@
 
   import { getContext } from '../context';
 
-  const { port } = getContext();
+  const { port, state } = getContext();
+
+  $: url = $state?.url ?? '';
 
   onMount(() => {
     port.postMessage('Hello from widget');
@@ -11,7 +13,7 @@
 </script>
 
 <div>
-  <p>Extension widget</p>
+  <p>Current url: {url}</p>
 </div>
 
 <style>
