@@ -45,7 +45,10 @@ function start() {
   });
 
   window.addEventListener('message', (event) => {
-    const { height } = event.data;
+    const { height } = event.data ?? {};
+
+    if (!height) return;
+
     assignStyles(iframe, {
       height: `${height}px`,
     });

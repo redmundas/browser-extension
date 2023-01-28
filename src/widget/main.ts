@@ -13,7 +13,6 @@ function start() {
     props: {},
   });
 
-  window.parent.postMessage('Testing', '*');
   const observer = heightObserver((height) => {
     window.parent.postMessage({ height }, '*');
   });
