@@ -2,37 +2,39 @@ import { assign, createMachine, interpret } from 'xstate';
 
 import logger from './logger';
 
-export type TabData = {
-  url?: string;
+export type UrlData = {
+  id: string;
+  url: string;
 };
 
 type Context = {
-  tabs: Record<number, Partial<TabData>>;
+  urls: UrlData[];
 };
 
-type CreateTabEvent = {
-  type: 'CREATE_TAB';
-  tabId: number;
+type InsertUrlEvent = {
+  type: 'INSERT_URL';
+  id: string;
+  url: string;
 };
-type RemoveTabEvent = {
-  type: 'REMOVE_TAB';
-  tabId: number;
+type RemoveUrlEvent = {
+  type: 'REMOVE_URL';
+  id: string;
 };
-type UpdateTabEvent = {
-  type: 'UPDATE_TAB';
-  tabId: number;
-  url?: string;
+type UpdateUrlEvent = {
+  type: 'UPDATE_URL';
+  id: string;
+  url: string;
 };
 type RestoreStateEvent = {
   type: 'RESTORE_STATE';
-  tabs: (TabData & { id: number })[];
+  urls: UrlData[];
 };
 
 type Event =
-  | CreateTabEvent
-  | RemoveTabEvent
+  | InsertUrlEvent
+  | RemoveUrlEvent
+  | UpdateUrlEvent
   | RestoreStateEvent
-  | UpdateTabEvent
   | { type: 'PAUSE' }
   | { type: 'START' };
 
@@ -40,51 +42,49 @@ const machine = createMachine<Context, Event>({
   predictableActionArguments: true,
   initial: 'disabled',
   context: {
-    tabs: {},
+    urls: [],
   },
   states: {
     enabled: {
       on: {
-        CREATE_TAB: {
+        INSERT_URL: {
           actions: assign((context, event) => {
-            const { tabId } = event;
+            const { id, url } = event;
+            const { urls } = context;
             return {
               ...context,
-              tabs: {
-                ...context.tabs,
-                [tabId]: {},
-              },
+              urls: urls.concat({ id, url }),
+            };
+          }),
+          cond: ({ urls }, { url }) => {
+            return !!url && !urls.some((data) => data.url === url);
+          },
+        },
+        REMOVE_URL: {
+          actions: assign((context, event) => {
+            const { id } = event;
+            const { urls } = context;
+            return {
+              ...context,
+              urls: urls.filter((data) => data.id !== id),
             };
           }),
         },
-        REMOVE_TAB: {
+        UPDATE_URL: {
           actions: assign((context, event) => {
-            const { tabId } = event;
-            delete context.tabs[tabId];
-            return context;
-          }),
-        },
-        RESTORE_STATE: {
-          actions: assign((context, event) => {
-            const { tabs } = event;
+            const { id, url } = event;
+            const { urls } = context;
             return {
               ...context,
-              tabs: Object.fromEntries(tabs.map(({ id, ...tab }) => [id, tab])),
-            };
-          }),
-        },
-        UPDATE_TAB: {
-          actions: assign((context, event) => {
-            const { tabId, url } = event;
-            return {
-              ...context,
-              tabs: {
-                ...context.tabs,
-                [tabId]: {
-                  ...context.tabs[tabId],
-                  url,
-                },
-              },
+              urls: urls.map((data) => {
+                if (data.id === id) {
+                  return {
+                    ...data,
+                    url,
+                  };
+                }
+                return data;
+              }),
             };
           }),
         },
@@ -93,6 +93,12 @@ const machine = createMachine<Context, Event>({
     },
     disabled: {
       on: {
+        RESTORE_STATE: {
+          actions: assign((context, event) => {
+            const { urls } = event;
+            return { ...context, urls };
+          }),
+        },
         START: { target: 'enabled' },
       },
     },

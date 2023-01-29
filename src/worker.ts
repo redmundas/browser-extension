@@ -1,9 +1,9 @@
-import type { Tabs, WebNavigation } from 'webextension-polyfill';
+import { v4 as uuid } from 'uuid';
+import type { WebNavigation } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
 import Connection from './comms/main';
 import { addEventListener } from './events';
-import { getActiveTabs } from './libs/tabs';
 import { injectScript } from './libs/utils';
 import logger from './logger';
 import createStateMachine from './state';
@@ -14,14 +14,12 @@ start();
 async function start() {
   const db = new StateDatabase();
   const state = createStateMachine();
+  await restoreState(db, state);
 
   // persist state changes
-  state.onChange(async ({ tabs }, { tabs: prev } = { tabs: {} }) => {
-    // very naive approach
-    if (JSON.stringify(tabs) === JSON.stringify(prev)) return;
-
-    await db.tabs.clear();
-    await db.tabs.bulkPut(Object.entries(tabs).map(([id, tab]) => ({ ...tab, id: Number(id) })));
+  state.onChange(async ({ urls }) => {
+    await db.urls.clear();
+    await db.urls.bulkPut(urls);
   });
 
   // listen for messages from popup
@@ -32,8 +30,11 @@ async function start() {
 
   // listen for messages from widget
   const widget = new Connection('widget');
-  widget.addListener((message) => {
-    logger.debug('WIDGET_MESSAGE', message);
+  widget.addListener(({ data, type }) => {
+    logger.debug('WIDGET_MESSAGE', { type, data });
+    if (type === 'store_url') {
+      state.send('INSERT_URL', { id: uuid(), url: data });
+    }
   });
 
   // inject content script into third party pages
@@ -51,24 +52,10 @@ async function start() {
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);
   });
 
-  addEventListener('tab_created', (tab: Tabs.Tab) => {
-    state.send('CREATE_TAB', { tabId: tab.id });
-  });
-
-  addEventListener('tab_removed', ({ tabId }) => {
-    state.send('REMOVE_TAB', { tabId });
-  });
-
-  addEventListener('tab_updated', ({ tab, tabId }: { tab: Tabs.Tab; tabId: number }) => {
-    state.send('UPDATE_TAB', { tabId, url: tab.url });
-  });
-
-  const activeTabs = await getActiveTabs();
-  const ids = activeTabs.map(({ id }) => id as number);
-
-  const persisted = await db.tabs.toArray();
-  const tabs = persisted.filter(({ id }) => ids.includes(id));
-
   state.send('START');
-  state.send('RESTORE_STATE', { tabs });
+}
+
+async function restoreState(db: StateDatabase, state: ReturnType<typeof createStateMachine>) {
+  const urls = await db.urls.toArray();
+  state.send('RESTORE_STATE', { urls });
 }

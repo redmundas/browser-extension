@@ -1,9 +1,9 @@
 import { getContext as getCtx } from 'svelte';
 import { type Readable, readable } from 'svelte/store';
 
-import Connection from './comms/child';
-import type { TabData } from './state';
-import StateDatabase from './store';
+import Connection from '../comms/child';
+import type { UrlData } from '../state';
+import StateDatabase from '../store';
 
 /**
  *  context object for svelte apps
@@ -11,21 +11,20 @@ import StateDatabase from './store';
 
 export type Context = {
   port: Connection;
-  state: Readable<TabData>;
+  urls: Readable<UrlData[]>;
 };
 
-export function makeContext(name: string, tabId?: number) {
+export function makeContext(name: string) {
   const db = new StateDatabase();
   const port = new Connection(name);
-  const state = readable<TabData>({}, (set) => {
-    if (!tabId) return;
-    db.subscribe('tabs', tabId, (tab) => {
-      set(tab);
+  const urls = readable<UrlData[]>([], (set) => {
+    db.subscribe('urls', (data) => {
+      set(data);
     });
   });
 
   const context = new Map();
-  context.set('app', { port, state });
+  context.set('app', { port, urls });
 
   return context;
 }

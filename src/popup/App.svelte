@@ -1,20 +1,33 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { getContext } from '../context';
+  import { getContext } from './context';
 
-  const { port } = getContext();
+  const { port, urls: store } = getContext();
 
   onMount(() => {
-    port.postMessage('Hello from popup');
+    port.postMessage('greeting', 'Hello from popup');
   });
+
+  $: urls = $store ?? [];
 </script>
 
-<div>Extension popup</div>
+<section>
+  <div>Saved urls:</div>
+  {#each urls as { id, url } (id)}
+    <div>{url}</div>
+  {/each}
+</section>
 
 <style>
+  section {
+    height: 400px;
+    width: 300px;
+    padding: 8px;
+  }
   div {
-    min-height: 400px;
-    min-width: 300px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

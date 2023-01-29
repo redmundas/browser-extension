@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.11.18
+  '@types/uuid': ^9.0.0
   '@types/webextension-polyfill': ^0.10.0
   '@typescript-eslint/eslint-plugin': ^5.49.0
   '@typescript-eslint/parser': ^5.49.0
@@ -25,6 +26,7 @@ specifiers:
   svelte: ^3.55.1
   svelte-check: ^3.0.3
   typescript: ^4.9.4
+  uuid: ^9.0.0
   webextension-polyfill: ^0.10.0
   xstate: ^4.35.3
   yargs: ^17.6.2
@@ -33,11 +35,13 @@ dependencies:
   dexie: 3.2.3
   emittery: 1.0.1
   loglevel: 1.8.1
+  uuid: 9.0.0
   webextension-polyfill: 0.10.0
   xstate: 4.35.3
 
 devDependencies:
   '@types/node': 18.11.18
+  '@types/uuid': 9.0.0
   '@types/webextension-polyfill': 0.10.0
   '@typescript-eslint/eslint-plugin': 5.49.0_iu322prlnwsygkcra5kbpy22si
   '@typescript-eslint/parser': 5.49.0_7uibuqfxkfaozanbtbziikiqje
@@ -358,6 +362,10 @@ packages:
 
   /@types/semver/7.3.13:
     resolution: {integrity: sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==}
+    dev: true
+
+  /@types/uuid/9.0.0:
+    resolution: {integrity: sha512-kr90f+ERiQtKWMz5rP32ltJ/BtULDI5RVO0uavn1HQUOwjx0R1h0rnDYNL0CepF1zL5bSY6FISAfd9tOdDhU5Q==}
     dev: true
 
   /@types/webextension-polyfill/0.10.0:
@@ -2173,6 +2181,11 @@ packages:
     dependencies:
       punycode: 2.2.0
     dev: true
+
+  /uuid/9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+    dev: false
 
   /webextension-polyfill/0.10.0:
     resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
