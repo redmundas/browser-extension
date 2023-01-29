@@ -24,18 +24,21 @@ async function start() {
 
   // listen for messages from popup
   const popup = new Connection('popup');
+  // log all incoming messages
   popup.addListener((message) => {
     logger.debug('POPUP_MESSAGE', message);
   });
 
   // listen for messages from widget
   const widget = new Connection('widget');
-  widget.addListener(({ data, type }) => {
-    logger.debug('WIDGET_MESSAGE', { type, data });
-    if (type === 'store_url') {
-      state.send('INSERT_URL', { id: uuid(), url: data });
-    }
+  // log all incoming messages
+  widget.addListener((message) => {
+    logger.debug('WIDGET_MESSAGE', message);
   });
+  // listen for store_url messages
+  widget.addListener(({ data }) => {
+    state.send('INSERT_URL', { id: uuid(), url: data });
+  }, 'store_url');
 
   // inject content script into third party pages
   addEventListener('navigation_committed', async ({ frameId, tabId, url }: WebNavigation.OnCommittedDetailsType) => {

@@ -20,8 +20,10 @@ export default class ChildConnection {
     this.port?.postMessage({ type, data });
   }
 
-  public addListener(listener: (message: Message) => void) {
-    this.emitter.on('message', listener);
+  public addListener(listener: (message: Message) => void): void;
+  public addListener(listener: (message: Message) => void, type: string): void;
+  public addListener(listener: (message: Message) => void, type = '*') {
+    this.emitter.on(`message/${type}`, listener);
   }
 
   private createConnection() {
@@ -35,7 +37,9 @@ export default class ChildConnection {
       });
 
       this.port.onMessage.addListener((message: Message) => {
-        this.emitter.emit('message', message);
+        const { type } = message;
+        this.emitter.emit(`message/${type}`, message);
+        this.emitter.emit('message/*', message);
       });
     } catch (error) {
       logger.error('CONNECTION_ERROR', error);
