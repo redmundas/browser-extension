@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill';
 
 import Connection from './comms/main';
 import { addEventListener } from './events';
+import { getActiveTabs } from './libs/tabs';
 import { injectScript } from './libs/utils';
 import logger from './logger';
 import createStateMachine from './state';
@@ -62,7 +63,7 @@ async function start() {
     state.send('UPDATE_TAB', { tabId, url: tab.url });
   });
 
-  const activeTabs = await browser.tabs.query({});
+  const activeTabs = await getActiveTabs();
   const ids = activeTabs.map(({ id }) => id as number);
 
   const persisted = await db.tabs.toArray();
