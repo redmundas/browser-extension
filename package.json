@@ -20,6 +20,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "@types/uuid": "^9.0.0",
     "@types/webextension-polyfill": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^5.49.0",
     "@typescript-eslint/parser": "^5.49.0",
@@ -43,8 +44,11 @@
     "yargs": "^17.6.2"
   },
   "dependencies": {
+    "dexie": "^3.2.3",
     "emittery": "^1.0.1",
     "loglevel": "^1.8.1",
-    "webextension-polyfill": "^0.10.0"
+    "uuid": "^9.0.0",
+    "webextension-polyfill": "^0.10.0",
+    "xstate": "^4.35.3"
   }
 }

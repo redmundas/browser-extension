@@ -3,7 +3,7 @@ import type { Runtime } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
 import logger from '../logger';
-import type { Message } from './types';
+import type { Message, MsgBody } from './types';
 
 export default class MainConnection {
   private emitter = new EventEmitter();
@@ -24,8 +24,8 @@ export default class MainConnection {
     });
   }
 
-  public postMessage(message: Message) {
-    this.port?.postMessage(message);
+  public postMessage(type: string, data: MsgBody) {
+    this.port?.postMessage({ type, data });
   }
 
   public addListener(listener: (message: Message) => void) {

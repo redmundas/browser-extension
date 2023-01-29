@@ -1,23 +1,24 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { getContext } from './context';
 
-  import { getContext } from '../context';
+  const { port, url: store } = getContext();
 
-  const { port } = getContext();
+  $: url = $store ?? '';
 
-  onMount(() => {
-    port.postMessage('Hello from widget');
-  });
+  function onSave() {
+    port.postMessage('store_url', url);
+  }
 </script>
 
 <div>
-  <p>Extension widget</p>
+  <p>Current url: {url}</p>
+  <button on:click={onSave}>Save url</button>
 </div>
 
 <style>
   div {
     width: 100%;
     height: auto;
-    padding: 0 8px;
+    padding: 8px;
   }
 </style>
