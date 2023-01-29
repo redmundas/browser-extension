@@ -11,3 +11,10 @@
 </script>
 
 <div>Extension popup</div>
+
+<style>
+  div {
+    min-height: 400px;
+    min-width: 300px;
+  }
+</style>

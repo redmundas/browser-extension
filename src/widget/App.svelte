@@ -20,6 +20,6 @@
   div {
     width: 100%;
     height: auto;
-    padding: 0 8px;
+    padding: 8px;
   }
 </style>

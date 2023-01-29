@@ -1,3 +1,5 @@
+import '../css/reset.css';
+
 import { makeContext } from '../context';
 import App from './App.svelte';
 
