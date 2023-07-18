@@ -11,9 +11,9 @@
     "check:lint": "eslint .",
     "check:svelte": "svelte-check",
     "check:tsc": "tsc --noEmit",
-    "fix": "pnpm run fix:lint && pnpm run fix:pretty",
-    "fix:lint": "pnpm run check:lint --fix",
-    "fix:pretty": "prettier -w --plugin-search-dir=. src"
+    "format": "pnpm run format:lint && pnpm run format:pretty",
+    "format:lint": "pnpm run check:lint --fix",
+    "format:pretty": "prettier -w --plugin-search-dir=. src"
   },
   "keywords": [],
   "author": "",
