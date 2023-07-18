@@ -5,7 +5,7 @@ import type { Tabs } from 'webextension-polyfill';
 import Connection from '../comms/child';
 
 /**
- *  context object for svelte apps
+ *  context object for svelte app
  */
 
 export type Context = {

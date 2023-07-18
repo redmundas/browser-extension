@@ -1,9 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import type { WebNavigation } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
 import Connection from './comms/main';
-import { addEventListener } from './events';
+import { addEventListener, type DomContentLoadedData } from './events';
 import { injectScript } from './libs/utils';
 import logger from './logger';
 import createStateMachine from './state';
@@ -41,7 +40,7 @@ async function start() {
   }, 'store_url');
 
   // inject content script into third party pages
-  addEventListener('navigation_committed', async ({ frameId, tabId, url }: WebNavigation.OnCommittedDetailsType) => {
+  addEventListener('dom_content_loaded', async ({ frameId, tabId, url }: DomContentLoadedData) => {
     if (frameId !== 0) return;
 
     const frame = await browser.webNavigation.getFrame({

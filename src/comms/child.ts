@@ -17,7 +17,11 @@ export default class ChildConnection {
   }
 
   public postMessage(type: string, data: MsgBody) {
-    this.port?.postMessage({ type, data });
+    try {
+      this.port?.postMessage({ type, data });
+    } catch (error) {
+      logger.error('MESSAGE_ERROR', error);
+    }
   }
 
   public addListener(listener: (message: Message) => void): void;

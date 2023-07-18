@@ -6,7 +6,7 @@ import type { UrlData } from '../state';
 import StateDatabase from '../store';
 
 /**
- *  context object for svelte apps
+ *  context object for svelte app
  */
 
 export type Context = {

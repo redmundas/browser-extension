@@ -4,13 +4,21 @@ import browser from 'webextension-polyfill';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EventData = any;
-export type EventType = 'navigation_committed' | 'tab_activated' | 'tab_created' | 'tab_removed' | 'tab_updated';
+export type EventType =
+  | 'dom_content_loaded'
+  | 'navigation_committed'
+  | 'tab_activated'
+  | 'tab_created'
+  | 'tab_removed'
+  | 'tab_updated';
+export type DomContentLoadedData = WebNavigation.OnDOMContentLoadedDetailsType;
 export type NavigationCommittedData = WebNavigation.OnCommittedDetailsType;
 export type TabActivatedData = Tabs.OnActivatedActiveInfoType;
 export type TabCreatedData = Tabs.Tab;
 export type TabRemovedData = { tabId: number; info: Tabs.OnRemovedRemoveInfoType };
 export type TabUpdatedData = { tabId: number; info: Tabs.OnUpdatedChangeInfoType; tab: Tabs.Tab };
 
+export function addEventListener(type: 'dom_content_loaded', listener: (data: DomContentLoadedData) => void): void;
 export function addEventListener(type: 'navigation_committed', listener: (data: NavigationCommittedData) => void): void;
 export function addEventListener(type: 'tab_activated', listener: (data: TabActivatedData) => void): void;
 export function addEventListener(type: 'tab_created', listener: (data: TabCreatedData) => void): void;
@@ -20,6 +28,7 @@ export function addEventListener(type: EventType, listener: (data: EventData) =>
   emitter.on(type, listener);
 }
 
+export function dispatchEvent(type: 'dom_content_loaded', data: DomContentLoadedData): void;
 export function dispatchEvent(type: 'navigation_committed', data: NavigationCommittedData): void;
 export function dispatchEvent(type: 'tab_activated', data: TabActivatedData): void;
 export function dispatchEvent(type: 'tab_created', data: TabCreatedData): void;
@@ -36,7 +45,16 @@ browser.webNavigation.onCommitted.addListener(
     dispatchEvent('navigation_committed', details);
   },
   {
-    url: [{ schemes: ['https'] }],
+    url: [{ schemes: ['http', 'https'] }],
+  },
+);
+
+browser.webNavigation.onDOMContentLoaded.addListener(
+  async (details: WebNavigation.OnDOMContentLoadedDetailsType) => {
+    dispatchEvent('dom_content_loaded', details);
+  },
+  {
+    url: [{ schemes: ['http', 'https'] }],
   },
 );
 
