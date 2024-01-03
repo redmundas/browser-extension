@@ -1,6 +1,4 @@
-import { assign, createMachine, interpret } from 'xstate';
-
-import logger from './logger';
+import { assign, createActor, setup } from 'xstate';
 
 export type UrlData = {
   id: string;
@@ -38,78 +36,84 @@ type Event =
   | { type: 'PAUSE' }
   | { type: 'START' };
 
-const machine = createMachine<Context, Event>({
-  predictableActionArguments: true,
-  initial: 'disabled',
-  context: {
-    urls: [],
-  },
-  states: {
-    enabled: {
-      on: {
-        INSERT_URL: {
-          actions: assign((context, event) => {
-            const { id, url } = event;
-            const { urls } = context;
-            return {
-              ...context,
-              urls: urls.concat({ id, url }),
-            };
-          }),
-          cond: ({ urls }, { url }) => {
-            return !!url && !urls.some((data) => data.url === url);
+function createMachine() {
+  return setup({
+    types: {
+      context: {} as Context,
+      events: {} as Event,
+    },
+  }).createMachine({
+    initial: 'disabled',
+    context: {
+      urls: [],
+    },
+    states: {
+      enabled: {
+        on: {
+          INSERT_URL: {
+            actions: assign(({ context, event }) => {
+              const { id, url } = event;
+              const { urls } = context;
+              return {
+                ...context,
+                urls: urls.concat({ id, url }),
+              };
+            }),
+            guard: ({ context, event }) => {
+              const { url } = event;
+              const { urls } = context;
+              return !!url && !urls.some((data) => data.url === url);
+            },
           },
+          REMOVE_URL: {
+            actions: assign(({ context, event }) => {
+              const { id } = event;
+              const { urls } = context;
+              return {
+                ...context,
+                urls: urls.filter((data) => data.id !== id),
+              };
+            }),
+          },
+          UPDATE_URL: {
+            actions: assign(({ context, event }) => {
+              const { id, url } = event;
+              const { urls } = context;
+              return {
+                ...context,
+                urls: urls.map((data) => {
+                  if (data.id === id) {
+                    return {
+                      ...data,
+                      url,
+                    };
+                  }
+                  return data;
+                }),
+              };
+            }),
+          },
+          PAUSE: { target: 'disabled' },
         },
-        REMOVE_URL: {
-          actions: assign((context, event) => {
-            const { id } = event;
-            const { urls } = context;
-            return {
-              ...context,
-              urls: urls.filter((data) => data.id !== id),
-            };
-          }),
+      },
+      disabled: {
+        on: {
+          RESTORE_STATE: {
+            actions: assign(({ context, event }) => {
+              const { urls } = event;
+              return { ...context, urls };
+            }),
+          },
+          START: { target: 'enabled' },
         },
-        UPDATE_URL: {
-          actions: assign((context, event) => {
-            const { id, url } = event;
-            const { urls } = context;
-            return {
-              ...context,
-              urls: urls.map((data) => {
-                if (data.id === id) {
-                  return {
-                    ...data,
-                    url,
-                  };
-                }
-                return data;
-              }),
-            };
-          }),
-        },
-        PAUSE: { target: 'disabled' },
       },
     },
-    disabled: {
-      on: {
-        RESTORE_STATE: {
-          actions: assign((context, event) => {
-            const { urls } = event;
-            return { ...context, urls };
-          }),
-        },
-        START: { target: 'enabled' },
-      },
-    },
-  },
-});
+  });
+}
 
 export default function createStateMachine() {
-  const service = interpret(machine);
-  service.onEvent((event) => {
-    logger.debug('STATE_EVENT', event);
-  });
+  const machine = createMachine();
+  const service = createActor(machine);
   service.start();
   return service;
 }

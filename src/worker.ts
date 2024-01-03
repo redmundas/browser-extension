@@ -16,7 +16,8 @@ async function start() {
   await restoreState(db, state);
 
   // persist state changes
-  state.onChange(async ({ urls }) => {
+  state.subscribe(async ({ context }) => {
+    const { urls } = context;
     await db.urls.clear();
     await db.urls.bulkPut(urls);
   });
@@ -36,7 +37,7 @@ async function start() {
   });
   // listen for store_url messages
   widget.addListener(({ data }) => {
-    state.send('INSERT_URL', { id: uuid(), url: data });
+    state.send({ type: 'INSERT_URL', id: uuid(), url: data });
   }, 'store_url');
 
   // inject content script into third party pages
@@ -54,10 +55,10 @@ async function start() {
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);
   });
 
-  state.send('START');
+  state.send({ type: 'START' });
 }
 
 async function restoreState(db: StateDatabase, state: ReturnType<typeof createStateMachine>) {
   const urls = await db.urls.toArray();
-  state.send('RESTORE_STATE', { urls });
+  state.send({ type: 'RESTORE_STATE', urls });
 }
