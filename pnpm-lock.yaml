@@ -21,8 +21,8 @@ dependencies:
     specifier: ^0.10.0
     version: 0.10.0
   xstate:
-    specifier: ^4.38.2
-    version: 4.38.2
+    specifier: ^5.4.1
+    version: 5.4.1
 
 devDependencies:
   '@types/node':
@@ -2566,8 +2566,8 @@ packages:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
 
-  /xstate@4.38.2:
-    resolution: {integrity: sha512-Fba/DwEPDLneHT3tbJ9F3zafbQXszOlyCJyQqqdzmtlY/cwE2th462KK48yaANf98jHlP6lJvxfNtN0LFKXPQg==}
+  /xstate@5.4.1:
+    resolution: {integrity: sha512-1DDT047hsTCSgm3BwLyb4sXQDmTdbLutc4ni0MLACgd2yX6vij35pnNNf1F4U6kQ8njx6NxQ6wpLjlh1lqs0NQ==}
     dev: false
 
   /y18n@5.0.8:
