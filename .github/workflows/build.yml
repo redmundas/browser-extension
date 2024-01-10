@@ -110,7 +110,7 @@ jobs:
           fi
 
       - name: Archive extension
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: extension-${{ github.run_number }}
           path: dist/
