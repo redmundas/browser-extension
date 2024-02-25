@@ -10,7 +10,7 @@ dependencies:
     version: 3.2.4
   emittery:
     specifier: ^1.0.1
-    version: 1.0.1
+    version: 1.0.3
   loglevel:
     specifier: ^1.8.1
     version: 1.8.1
@@ -937,8 +937,8 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /emittery@1.0.1:
-    resolution: {integrity: sha512-2ID6FdrMD9KDLldGesP6317G78K7km/kMcwItRtVFva7I/cSEOIaLpewaUb+YLXVwdAp3Ctfxh/V5zIl1sj7dQ==}
+  /emittery@1.0.3:
+    resolution: {integrity: sha512-tJdCJitoy2lrC2ldJcqN4vkqJ00lT+tOWNT1hBJjO/3FDMJa5TTIiYGCKGkn/WfCyOzUMObeohbVTj00fhiLiA==}
     engines: {node: '>=14.16'}
     dev: false
 
