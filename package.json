@@ -44,11 +44,11 @@
     "yargs": "^17.7.2"
   },
   "dependencies": {
-    "dexie": "^3.2.4",
-    "emittery": "^1.0.1",
-    "loglevel": "^1.8.1",
+    "dexie": "^4.0.4",
+    "emittery": "^1.0.3",
+    "loglevel": "^1.9.1",
     "uuid": "^9.0.1",
     "webextension-polyfill": "^0.10.0",
-    "xstate": "^5.4.1"
+    "xstate": "^5.10.0"
   }
 }
