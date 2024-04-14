@@ -35,6 +35,7 @@ async function start() {
   widget.addListener((message) => {
     logger.debug('WIDGET_MESSAGE', message);
   });
+
   // listen for store_url messages
   widget.addListener(({ data }) => {
     state.send({ type: 'INSERT_URL', id: uuid(), url: data });
