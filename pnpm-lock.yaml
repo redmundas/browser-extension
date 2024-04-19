@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      dexie:
-        specifier: ^4.0.4
-        version: 4.0.4
       emittery:
         specifier: ^1.0.3
         version: 1.0.3
@@ -23,9 +20,6 @@ importers:
       webextension-polyfill:
         specifier: ^0.11.0
         version: 0.11.0(esbuild@0.20.2)
-      xstate:
-        specifier: ^5.10.0
-        version: 5.11.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.0.0
@@ -629,9 +623,6 @@ packages:
   detect-indent@6.1.0:
     resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
     engines: {node: '>=8'}
-
-  dexie@4.0.4:
-    resolution: {integrity: sha512-wFzwWSUdi+MC3jiFeQcCp9nInR7EaX8edzYY+4wmiITkQAiSnHpe4Wo2o5Ce5tJZe2nqt7mLW91MsW4GYx3ziQ==}
 
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
@@ -1521,9 +1512,6 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  xstate@5.11.0:
-    resolution: {integrity: sha512-0MqTLpc7dr/hXFHY25oN4sdnO3Ey6MYy9WkWxOgiwjPV0S6rWwLb5nZlRlPDSku2GEV4/y6AR8bX+GNCOxnEwA==}
-
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
     engines: {node: '>=10'}
@@ -2073,8 +2061,6 @@ snapshots:
   dequal@2.0.3: {}
 
   detect-indent@6.1.0: {}
-
-  dexie@4.0.4: {}
 
   dir-glob@3.0.1:
     dependencies:
@@ -2972,8 +2958,6 @@ snapshots:
       strip-ansi: 6.0.1
 
   wrappy@1.0.2: {}
-
-  xstate@5.11.0: {}
 
   y18n@5.0.8: {}
 

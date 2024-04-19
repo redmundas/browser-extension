@@ -2,8 +2,7 @@ import { getContext as getCtx } from 'svelte';
 import { type Readable, readable } from 'svelte/store';
 
 import Connection from '../comms/child';
-import type { UrlData } from '../state';
-import StateDatabase from '../store';
+import type { UrlData, Store } from '../store';
 
 /**
  *  context object for svelte app
@@ -14,11 +13,10 @@ export type Context = {
   urls: Readable<UrlData[]>;
 };
 
-export function makeContext(name: string) {
-  const db = new StateDatabase();
+export function makeContext(name: string, store: Store) {
   const port = new Connection(name);
-  const urls = readable<UrlData[]>([], (set) => {
-    db.subscribe('urls', (data) => {
+  const urls = readable<UrlData[]>(store.urls, (set) => {
+    store.subscribe<UrlData[]>('urls', (data) => {
       set(data);
     });
   });

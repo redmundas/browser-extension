@@ -1,33 +1,43 @@
-import Dexie, { liveQuery, type PromiseExtended, type Subscription, type Table } from 'dexie';
+import { v4 as uuid } from 'uuid';
+import browser from 'webextension-polyfill';
 
-import type { UrlData } from './state';
+export type UrlData = {
+  id: string;
+  url: string;
+};
 
-//
-// Declare Database
-//
-export default class StateDatabase extends Dexie {
-  public urls!: Table<UrlData, string>;
+export class Store {
+  private _urls: { id: string; url: string }[] = [];
 
-  public constructor() {
-    super('StateDatabase');
-    this.version(2).stores({
-      urls: 'id,url',
+  constructor(private engine = browser.storage.local) {}
+
+  get urls() {
+    return this._urls;
+  }
+
+  public async init() {
+    this._urls = await this.getItem<{ id: string; url: string }[]>('urls', this._urls);
+  }
+
+  public async addUrl(url: string) {
+    this._urls.push({ id: uuid(), url });
+    await this.persistUrls();
+  }
+
+  public subscribe<T = undefined>(key: 'urls', callback: (value: T) => void) {
+    this.engine.onChanged.addListener((changes) => {
+      if (key in changes) {
+        callback(changes[key].newValue);
+      }
     });
   }
 
-  public subscribe<T = UrlData>(tableName: 'urls', callback: (values: T[]) => void): Subscription;
-  public subscribe<T = UrlData>(tableName: 'urls', callback: (values: T) => void, id: string): Subscription;
-  public subscribe<T = UrlData>(tableName: 'urls', callback: (values: T | T[]) => void, id?: string) {
-    const table = this[tableName];
+  private async persistUrls() {
+    await this.engine.set({ urls: this._urls });
+  }
 
-    if (id) {
-      return liveQuery(() => table.get({ [table.schema.primKey.name]: id }) as PromiseExtended<T>).subscribe({
-        next: callback,
-      });
-    }
-
-    return liveQuery(() => table.toArray() as PromiseExtended<T[]>).subscribe({
-      next: callback,
-    });
+  private async getItem<T = unknown>(key: string, value: T) {
+    const store = await this.engine.get({ [key]: value });
+    return store[key] as T;
   }
 }

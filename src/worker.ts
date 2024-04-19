@@ -1,26 +1,16 @@
-import { v4 as uuid } from 'uuid';
 import browser from 'webextension-polyfill';
 
 import Connection from './comms/main';
 import { addEventListener, type DomContentLoadedData } from './events';
 import { injectScript } from './libs/utils';
 import logger from './logger';
-import createStateMachine from './state';
-import StateDatabase from './store';
+import { Store } from './store';
 
 start();
 
 async function start() {
-  const db = new StateDatabase();
-  const state = createStateMachine();
-  await restoreState(db, state);
-
-  // persist state changes
-  state.subscribe(async ({ context }) => {
-    const { urls } = context;
-    await db.urls.clear();
-    await db.urls.bulkPut(urls);
-  });
+  const store = new Store();
+  await store.init();
 
   // listen for messages from popup
   const popup = new Connection('popup');
@@ -37,8 +27,8 @@ async function start() {
   });
 
   // listen for store_url messages
-  widget.addListener(({ data }) => {
-    state.send({ type: 'INSERT_URL', id: uuid(), url: data });
+  widget.addListener(async ({ data }) => {
+    await store.addUrl(data);
   }, 'store_url');
 
   // inject content script into third party pages
@@ -55,11 +45,4 @@ async function start() {
     await injectScript(tabId, 'content/main.js');
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);
   });
-
-  state.send({ type: 'START' });
-}
-
-async function restoreState(db: StateDatabase, state: ReturnType<typeof createStateMachine>) {
-  const urls = await db.urls.toArray();
-  state.send({ type: 'RESTORE_STATE', urls });
 }
