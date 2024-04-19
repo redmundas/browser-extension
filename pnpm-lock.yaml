@@ -25,7 +25,7 @@ importers:
         version: 0.10.0
       xstate:
         specifier: ^5.10.0
-        version: 5.10.0
+        version: 5.11.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.0.0
@@ -1148,8 +1148,8 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  xstate@5.10.0:
-    resolution: {integrity: sha512-rn3AbPFHngLqtfFTe9KDXJ1wQX4ACDKnQyQ2ShjuKor3iVnxDSKyDL9llFLiOpaBQu+cFMKcZYlpXo5nb/q5rw==}
+  xstate@5.11.0:
+    resolution: {integrity: sha512-0MqTLpc7dr/hXFHY25oN4sdnO3Ey6MYy9WkWxOgiwjPV0S6rWwLb5nZlRlPDSku2GEV4/y6AR8bX+GNCOxnEwA==}
 
   y18n@5.0.8:
     resolution: {integrity: sha512-0pfFzegeDWJHJIAmTLRP2DwHjdF5s7jo9tuztdQxAhINCdvS+3nGINqPd00AphqJR/0LhANUS6/+7SCb98YOfA==}
@@ -2207,7 +2207,7 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  xstate@5.10.0: {}
+  xstate@5.11.0: {}
 
   y18n@5.0.8: {}
 
