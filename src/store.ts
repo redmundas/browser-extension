@@ -1,5 +1,6 @@
-import { v4 as uuid } from 'uuid';
 import browser from 'webextension-polyfill';
+
+import { uuid } from './libs/uuid';
 
 export type UrlData = {
   id: string;
