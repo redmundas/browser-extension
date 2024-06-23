@@ -11,12 +11,15 @@ export default class ChildConnection {
 
   constructor(private name: string) {
     this.emitter.on('disconnected', () => {
-      this.createConnection();
+      logger.debug('DISCONNECTED', this.name);
+      setTimeout(() => {
+        this.createConnection();
+      });
     });
     this.createConnection();
   }
 
-  public postMessage(type: string, data: MsgBody) {
+  public postMessage(type: string, data: MsgBody = {}) {
     try {
       this.port?.postMessage({ type, data });
     } catch (error) {
@@ -36,8 +39,8 @@ export default class ChildConnection {
       this.emitter.emit('connected');
 
       this.port.onDisconnect.addListener(() => {
-        logger.debug('DISCONNECTED', this.name);
         this.emitter.emit('disconnected');
+        this.port = undefined;
       });
 
       this.port.onMessage.addListener((message: Message) => {

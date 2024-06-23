@@ -1,24 +1,10 @@
 <script lang="ts">
   import { getContext } from './context';
 
-  const { port, url: store } = getContext();
+  const { size } = getContext();
 
-  $: url = $store ?? '';
-
-  function onSave() {
-    port.postMessage('store_url', url);
-  }
+  $: vh = $size.vh;
+  $: vw = $size.vw;
 </script>
 
-<div>
-  <p>Current url: {url}</p>
-  <button on:click={onSave}>Save url</button>
-</div>
-
-<style>
-  div {
-    width: 100%;
-    height: auto;
-    padding: 8px;
-  }
-</style>
+<div class="p-2">{vw} &#x2717; {vh}</div>

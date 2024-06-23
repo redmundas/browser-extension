@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "moduleResolution": "node",
     "noEmit": true,
@@ -13,10 +12,10 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext",
-    "module": "esnext",
-    "preserveValueImports": true,
-    "ignoreDeprecations": "5.0"
+    "target": "ESNext",
+    "module": "ESNext",
+    "ignoreDeprecations": "5.0",
+    "verbatimModuleSyntax": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "dist/*"]
