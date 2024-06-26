@@ -1,15 +1,13 @@
-import '../css/reset.css';
+import '../css';
 
 import heightObserver from '../libs/height';
-import { getCurrentTab } from '../libs/tabs';
 import App from './App.svelte';
 import { makeContext } from './context';
 
 start();
 
 async function start() {
-  const tab = await getCurrentTab();
-  const context = makeContext('widget', tab);
+  const context = makeContext('widget');
   const container = document.createElement('div');
   document.body.append(container);
 
@@ -19,8 +17,10 @@ async function start() {
     props: {},
   });
 
+  window.parent.postMessage({ type: 'init' }, '*');
+
   const observer = heightObserver((height) => {
-    window.parent.postMessage({ height }, '*');
+    window.parent.postMessage({ type: 'height', value: height }, '*');
   });
   observer.observe(container);
 }

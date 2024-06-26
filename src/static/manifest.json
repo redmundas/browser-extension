@@ -1,20 +1,22 @@
 {
   "manifest_version": 3,
   "name": "Extension",
-  "short_name": "Extension",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Extension description",
   "icons": {},
-  "description": "Extension",
   "permissions": [
     "activeTab",
     "alarms",
     "contextMenus",
+    "favicon",
     "scripting",
+    "sidePanel",
     "storage",
     "tabs",
     "unlimitedStorage",
     "webNavigation"
   ],
+  "optional_permissions": ["history"],
   "host_permissions": ["*://*/*"],
   "web_accessible_resources": [
     {
@@ -26,8 +28,18 @@
     "service_worker": "worker.js"
   },
   "action": {
-    "default_icon": {},
     "default_title": "Extension",
     "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "devtools_page": "devtools.html",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
   }
 }

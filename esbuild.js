@@ -1,8 +1,12 @@
+import path from 'node:path';
+
 import dotenv from 'dotenv';
 import { build, context } from 'esbuild';
 import clear from 'esbuild-plugin-clear';
 import { copy } from 'esbuild-plugin-copy';
+import stylePlugin from 'esbuild-style-plugin';
 import sveltePlugin from 'esbuild-svelte';
+import { sveltePreprocess } from 'svelte-preprocess';
 import yargs from 'yargs';
 
 const { dev } = yargs(process.argv.slice(2)).argv;
@@ -11,14 +15,27 @@ dotenv.config();
 
 const options = {
   bundle: true,
-  entryPoints: ['src/content/main.ts', 'src/popup/main.ts', 'src/widget/main.ts', 'src/worker.ts'],
+  entryPoints: [
+    'src/content/main.ts',
+    'src/newtab/main.ts',
+    'src/panel/main.ts',
+    'src/popup/main.ts',
+    'src/widget/main.ts',
+    'src/devtools.ts',
+    'src/worker.ts',
+  ],
   target: ['esnext'],
   loader: {
     '.png': 'dataurl',
     '.svg': 'text',
   },
   plugins: [
-    sveltePlugin(),
+    sveltePlugin({
+      preprocess: sveltePreprocess(),
+    }),
+    stylePlugin({
+      postcssConfigFile: path.resolve('./postcss.config.js'),
+    }),
     copy({
       assets: [
         {

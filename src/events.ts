@@ -2,15 +2,21 @@ import EventEmitter from 'emittery';
 import type { Tabs, WebNavigation } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
+import type { Permission } from './store';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type EventData = any;
 export type EventType =
+  | 'action_clicked'
   | 'dom_content_loaded'
   | 'navigation_committed'
+  | 'permissions_granted'
+  | 'permissions_revoked'
   | 'tab_activated'
   | 'tab_created'
   | 'tab_removed'
   | 'tab_updated';
+export type ActionClickedData = { info: browser.Action.OnClickData | undefined; tab: Tabs.Tab };
 export type DomContentLoadedData = WebNavigation.OnDOMContentLoadedDetailsType;
 export type NavigationCommittedData = WebNavigation.OnCommittedDetailsType;
 export type TabActivatedData = Tabs.OnActivatedActiveInfoType;
@@ -18,8 +24,11 @@ export type TabCreatedData = Tabs.Tab;
 export type TabRemovedData = { tabId: number; info: Tabs.OnRemovedRemoveInfoType };
 export type TabUpdatedData = { tabId: number; info: Tabs.OnUpdatedChangeInfoType; tab: Tabs.Tab };
 
+export function addEventListener(type: 'action_clicked', listener: (data: ActionClickedData) => void): void;
 export function addEventListener(type: 'dom_content_loaded', listener: (data: DomContentLoadedData) => void): void;
 export function addEventListener(type: 'navigation_committed', listener: (data: NavigationCommittedData) => void): void;
+export function addEventListener(type: 'permissions_granted', listener: (data: Permission[]) => void): void;
+export function addEventListener(type: 'permissions_revoked', listener: (data: Permission[]) => void): void;
 export function addEventListener(type: 'tab_activated', listener: (data: TabActivatedData) => void): void;
 export function addEventListener(type: 'tab_created', listener: (data: TabCreatedData) => void): void;
 export function addEventListener(type: 'tab_removed', listener: (data: TabRemovedData) => void): void;
@@ -28,8 +37,11 @@ export function addEventListener(type: EventType, listener: (data: EventData) =>
   emitter.on(type, listener);
 }
 
+export function dispatchEvent(type: 'action_clicked', data: ActionClickedData): void;
 export function dispatchEvent(type: 'dom_content_loaded', data: DomContentLoadedData): void;
 export function dispatchEvent(type: 'navigation_committed', data: NavigationCommittedData): void;
+export function dispatchEvent(type: 'permissions_granted', data: Permission[]): void;
+export function dispatchEvent(type: 'permissions_revoked', data: Permission[]): void;
 export function dispatchEvent(type: 'tab_activated', data: TabActivatedData): void;
 export function dispatchEvent(type: 'tab_created', data: TabCreatedData): void;
 export function dispatchEvent(type: 'tab_removed', data: TabRemovedData): void;
@@ -72,4 +84,16 @@ browser.tabs.onRemoved.addListener((tabId: number, info: Tabs.OnRemovedRemoveInf
 
 browser.tabs.onUpdated.addListener((tabId: number, info: Tabs.OnUpdatedChangeInfoType, tab: Tabs.Tab) => {
   dispatchEvent('tab_updated', { tabId, info, tab });
+});
+
+browser.permissions.onAdded.addListener(({ permissions = [] }) => {
+  dispatchEvent('permissions_granted', permissions as Permission[]);
+});
+
+browser.permissions.onRemoved.addListener(({ permissions = [] }) => {
+  dispatchEvent('permissions_revoked', permissions as Permission[]);
+});
+
+browser.action.onClicked.addListener((tab: Tabs.Tab, info: browser.Action.OnClickData | undefined) => {
+  dispatchEvent('action_clicked', { info, tab });
 });

@@ -1,6 +1,5 @@
 import { getContext as getCtx } from 'svelte';
-import { type Readable, readable } from 'svelte/store';
-import type { Tabs } from 'webextension-polyfill';
+import { type Writable, writable } from 'svelte/store';
 
 import Connection from '../comms/child';
 
@@ -10,16 +9,22 @@ import Connection from '../comms/child';
 
 export type Context = {
   port: Connection;
-  url: Readable<string>;
+  size: Writable<{
+    vh: number;
+    vw: number;
+  }>;
 };
 
-export function makeContext(name: string, tab: Tabs.Tab) {
+export function makeContext(name: string) {
   const port = new Connection(name);
-
-  const url = readable<string>(tab.url);
+  const size = writable({ vh: 0, vw: 0 });
 
   const context = new Map();
-  context.set('app', { port, url });
+  context.set('app', { port, size });
+
+  window.addEventListener('message', (event) => {
+    size.set(event.data);
+  });
 
   return context;
 }

@@ -5,5 +5,10 @@ export async function getActiveTabs() {
 }
 
 export async function getCurrentTab() {
-  return browser.tabs.getCurrent();
+  const current = await browser.tabs.getCurrent();
+  if (current) {
+    return current;
+  }
+  const [active] = await browser.tabs.query({ active: true });
+  return active;
 }
