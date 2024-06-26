@@ -1,5 +1,5 @@
 import EventEmitter from 'emittery';
-import type { Tabs, WebNavigation } from 'webextension-polyfill';
+import type { Menus, Tabs, WebNavigation } from 'webextension-polyfill';
 import browser from 'webextension-polyfill';
 
 import type { Permission } from './store';
@@ -9,6 +9,7 @@ export type EventData = any;
 export type EventType =
   | 'action_clicked'
   | 'dom_content_loaded'
+  | 'menu_clicked'
   | 'navigation_committed'
   | 'permissions_granted'
   | 'permissions_revoked'
@@ -17,6 +18,7 @@ export type EventType =
   | 'tab_removed'
   | 'tab_updated';
 export type ActionClickedData = { info: browser.Action.OnClickData | undefined; tab: Tabs.Tab };
+export type MenuClickedData = { info: Menus.OnClickData; tab: Tabs.Tab | undefined };
 export type DomContentLoadedData = WebNavigation.OnDOMContentLoadedDetailsType;
 export type NavigationCommittedData = WebNavigation.OnCommittedDetailsType;
 export type TabActivatedData = Tabs.OnActivatedActiveInfoType;
@@ -25,6 +27,7 @@ export type TabRemovedData = { tabId: number; info: Tabs.OnRemovedRemoveInfoType
 export type TabUpdatedData = { tabId: number; info: Tabs.OnUpdatedChangeInfoType; tab: Tabs.Tab };
 
 export function addEventListener(type: 'action_clicked', listener: (data: ActionClickedData) => void): void;
+export function addEventListener(type: 'menu_clicked', listener: (data: MenuClickedData) => void): void;
 export function addEventListener(type: 'dom_content_loaded', listener: (data: DomContentLoadedData) => void): void;
 export function addEventListener(type: 'navigation_committed', listener: (data: NavigationCommittedData) => void): void;
 export function addEventListener(type: 'permissions_granted', listener: (data: Permission[]) => void): void;
@@ -39,6 +42,7 @@ export function addEventListener(type: EventType, listener: (data: EventData) =>
 
 export function dispatchEvent(type: 'action_clicked', data: ActionClickedData): void;
 export function dispatchEvent(type: 'dom_content_loaded', data: DomContentLoadedData): void;
+export function dispatchEvent(type: 'menu_clicked', data: MenuClickedData): void;
 export function dispatchEvent(type: 'navigation_committed', data: NavigationCommittedData): void;
 export function dispatchEvent(type: 'permissions_granted', data: Permission[]): void;
 export function dispatchEvent(type: 'permissions_revoked', data: Permission[]): void;
@@ -96,4 +100,8 @@ browser.permissions.onRemoved.addListener(({ permissions = [] }) => {
 
 browser.action.onClicked.addListener((tab: Tabs.Tab, info: browser.Action.OnClickData | undefined) => {
   dispatchEvent('action_clicked', { info, tab });
+});
+
+browser.contextMenus.onClicked.addListener((info: Menus.OnClickData, tab: Tabs.Tab | undefined) => {
+  dispatchEvent('menu_clicked', { info, tab });
 });

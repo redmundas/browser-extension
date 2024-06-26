@@ -1,22 +1,20 @@
 import browser from 'webextension-polyfill';
 
-import Connection from './comms/main';
+import { type Context, createContext } from './context';
 import { addEventListener, type DomContentLoadedData } from './events';
-import { getPermissions, requestPermissions } from './libs/permissions';
+import { setBadgeText } from './libs/action';
+import { createContextMenu, removeContextMenu } from './libs/menu';
+import { requestPermissions } from './libs/permissions';
 import { injectScript } from './libs/scripting';
 import { getActiveTabs, getCurrentTab } from './libs/tabs';
 import logger from './logger';
-import { type Components, WritableStore as Store } from './store';
+import { type Component, type Components, type Permission } from './store';
 
 start();
 
 async function start() {
-  const store = await initStore();
-
-  const content = new Connection('content');
-  const panel = new Connection('panel');
-  const popup = new Connection('popup');
-  // const widget = new Connection('widget');
+  const ctx = await createContext();
+  const { panel, popup, store } = ctx;
 
   // listen for messages from panel
   panel.onConnect(() => {
@@ -37,40 +35,38 @@ async function start() {
     }
     await store.addBookmark(tab);
   }, 'add_bookmark');
-  panel.addListener(async ({ data }) => {
+  panel.addListener<{ id: string }>(async ({ data }) => {
     await store.removeBookmark(data.id);
   }, 'remove_bookmark');
 
   // listen for messages from popup
-  popup.addListener(async ({ data }) => {
+  popup.addListener<{ name: Permission }>(async ({ data }) => {
     await requestPermissions({ permissions: [data.name] });
   }, 'request_permission');
-  popup.addListener(({ data }) => {
+  popup.addListener<{ name: Component }>(({ data }) => {
     if (data.name === 'panel') {
       panel.postMessage('close_window');
     }
   }, 'disable_component');
-  popup.addListener(({ data }) => {
-    if (data.name === 'widget') {
-      store.toggleComponent('widget');
+  popup.addListener<{ name: Component }>(async ({ data }) => {
+    const components: Component[] = ['badge', 'menu', 'widget'];
+    if (components.includes(data.name)) {
+      await store.toggleComponent(data.name);
     }
   }, 'toggle_component');
 
   // listed for messages in store
   store.subscribe<Components>('components', async (newComponents, oldComponents) => {
-    if (!oldComponents.widget && newComponents.widget) {
-      const tabs = await getActiveTabs();
-      const newTabIds = tabs
-        .filter(
-          ({ id, status, url }) => status === 'complete' && url?.startsWith('http') && !content.isTabConnected(id!),
-        )
-        .map(({ id }) => id!);
-      // enable widget on pages that were previously connected
-      content.postMessage('enable_widget');
-      // inject content script and enabled widget on new pages
-      await Promise.all(newTabIds.map((id) => injectScript(id!, 'content/main.js')));
-    } else if (oldComponents.widget && !newComponents.widget) {
-      content.postMessage('disable_widget');
+    if (oldComponents.widget !== newComponents.widget) {
+      await toggleWidget(ctx);
+    }
+
+    if (oldComponents.badge !== newComponents.badge) {
+      await toggleBadge(ctx);
+    }
+
+    if (oldComponents.menu !== newComponents.menu) {
+      await toggleMenu(ctx);
     }
   });
 
@@ -99,14 +95,41 @@ async function start() {
     logger.debug('PERMISSIONS_REVOKED', names);
     await store.revokePermissions(names);
   });
+
+  addEventListener('menu_clicked', async ({ info }) => {
+    if (info.menuItemId === 'toggle_widget') {
+      await store.toggleComponent('widget');
+    }
+  });
 }
 
-async function initStore() {
-  const store = new Store();
-  await store.init();
+async function toggleBadge({ store }: Context) {
+  if (store.components.badge) {
+    await setBadgeText('!');
+  } else {
+    await setBadgeText();
+  }
+}
 
-  const permissions = await getPermissions(['history']);
-  await Promise.all([store.setComponents({ widget: store.components.widget }), store.setPermissions(permissions)]);
+async function toggleMenu({ store }: Context) {
+  if (store.components.menu) {
+    await createContextMenu([{ id: 'toggle_widget', title: 'Toggle widget' }]);
+  } else {
+    await removeContextMenu();
+  }
+}
 
-  return store;
+async function toggleWidget({ content, store }: Context) {
+  if (store.components.widget) {
+    const tabs = await getActiveTabs();
+    const newTabIds = tabs
+      .filter(({ id, status, url }) => status === 'complete' && url?.startsWith('http') && !content.isTabConnected(id!))
+      .map(({ id }) => id!);
+    // enable widget on pages that were previously connected
+    content.postMessage('enable_widget');
+    // inject content script and enabled widget on new pages
+    await Promise.all(newTabIds.map((id) => injectScript(id!, 'content/main.js')));
+  } else {
+    content.postMessage('disable_widget');
+  }
 }
