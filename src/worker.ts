@@ -6,7 +6,7 @@ import { setBadgeText } from './libs/action';
 import { createContextMenu, removeContextMenu } from './libs/menu';
 import { requestPermissions } from './libs/permissions';
 import { injectScript } from './libs/scripting';
-import { getActiveTabs, getCurrentTab } from './libs/tabs';
+import { getActiveTabs, getCurrentTab, getTabById } from './libs/tabs';
 import logger from './logger';
 import { type Component, type Components, type Permission } from './store';
 
@@ -49,8 +49,7 @@ async function start() {
     }
   }, 'disable_component');
   popup.addListener<{ name: Component }>(async ({ data }) => {
-    const components: Component[] = ['badge', 'menu', 'widget'];
-    if (components.includes(data.name)) {
+    if (['badge', 'menu', 'widget'].includes(data.name)) {
       await store.toggleComponent(data.name);
     }
   }, 'toggle_component');
@@ -60,11 +59,9 @@ async function start() {
     if (oldComponents.widget !== newComponents.widget) {
       await toggleWidget(ctx);
     }
-
     if (oldComponents.badge !== newComponents.badge) {
       await toggleBadge(ctx);
     }
-
     if (oldComponents.menu !== newComponents.menu) {
       await toggleMenu(ctx);
     }
@@ -75,12 +72,16 @@ async function start() {
     if (frameId !== 0) return;
     if (store.isComponentDisabled('widget')) return;
 
-    const frame = await browser.webNavigation.getFrame({
-      frameId,
-      tabId,
-    });
+    const [frame, tab] = await Promise.all([
+      browser.webNavigation.getFrame({
+        frameId,
+        tabId,
+      }),
+      getTabById(tabId),
+    ]);
 
-    if (!frame) return;
+    if (!(frame && tab)) return;
+    if (!tab.url?.startsWith('http')) return;
 
     await injectScript(tabId, 'content/main.js');
     logger.debug('CONTENT_SCRIPT_INJECTED', tabId, url);

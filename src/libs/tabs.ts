@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 
-export async function getActiveTabs() {
+export function getActiveTabs() {
   return browser.tabs.query({});
 }
 
@@ -11,4 +11,8 @@ export async function getCurrentTab() {
   }
   const [active] = await browser.tabs.query({ active: true });
   return active;
+}
+
+export function getTabById(id: number) {
+  return browser.tabs.get(id);
 }
