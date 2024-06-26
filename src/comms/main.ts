@@ -74,9 +74,9 @@ export default class MainConnection {
     this.emitter.emit(`message_out/${tabId}`, { type, data });
   }
 
-  public addListener(listener: (message: Message) => void): void;
-  public addListener(listener: (message: Message) => void, type: string): void;
-  public addListener(listener: (message: Message) => void, type = '*') {
+  public addListener<T = MsgBody>(listener: (message: Message<T>) => void): void;
+  public addListener<T = MsgBody>(listener: (message: Message<T>) => void, type: string): void;
+  public addListener<T = MsgBody>(listener: (message: Message<T>) => void, type = '*') {
     this.emitter.on(`message_in/${type}`, listener);
   }
 

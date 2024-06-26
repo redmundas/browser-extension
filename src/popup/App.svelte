@@ -7,12 +7,18 @@
   import { getContext } from '../libs/svelte/context';
 
   const { components, permissions, port } = getContext();
-  const panel = writable($components.panel);
+  const badge = writable($components.badge);
+  const menu = writable($components.menu);
   const history = writable($permissions.history);
+  const panel = writable($components.panel);
   const widget = writable($components.widget);
 
-  function onToggleWidget() {
-    port.postMessage('toggle_component', { name: 'widget' });
+  async function onToggleBadge() {
+    port.postMessage('toggle_component', { name: 'badge' });
+  }
+
+  async function onToggleMenu() {
+    port.postMessage('toggle_component', { name: 'menu' });
   }
 
   async function onTogglePanel() {
@@ -24,6 +30,10 @@
     } else {
       port.postMessage('disable_component', { name: 'panel' });
     }
+  }
+
+  function onToggleWidget() {
+    port.postMessage('toggle_component', { name: 'widget' });
   }
 
   async function onToggleHistory() {
@@ -40,6 +50,14 @@
   <section class="w-full flex flex-col gap-y-2">
     <h3 class="font-semibold">UI Components</h3>
     <div class="w-full flex flex-col gap-y-2">
+      <div class="w-full flex items-center justify-between">
+        <h5>Badge</h5>
+        <Toggle bind:checked={$badge} on:change={onToggleBadge} />
+      </div>
+      <div class="w-full flex items-center justify-between">
+        <h5>Context menu</h5>
+        <Toggle bind:checked={$menu} on:change={onToggleMenu} />
+      </div>
       <div class="w-full flex items-center justify-between">
         <h5>Panel</h5>
         <Toggle bind:checked={$panel} on:change={onTogglePanel} />
