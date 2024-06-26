@@ -6,7 +6,7 @@ import App from './App.svelte';
 start();
 
 async function start() {
-  const context = await makeContext('popup', ['components', 'permissions']);
+  const context = await makeContext('popup', ['components', 'permissions', 'port']);
 
   new App({
     context,

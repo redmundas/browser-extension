@@ -14,7 +14,7 @@ export default class ChildConnection {
       logger.debug('DISCONNECTED', this.name);
       setTimeout(() => {
         this.createConnection();
-      });
+      }, 100);
     });
     this.createConnection();
   }
@@ -36,9 +36,11 @@ export default class ChildConnection {
   private createConnection() {
     try {
       this.port = browser.runtime.connect({ name: this.name });
-      this.emitter.emit('connected');
 
       this.port.onDisconnect.addListener(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const err = browser.runtime.lastError;
+
         this.emitter.emit('disconnected');
         this.port = undefined;
       });
@@ -48,6 +50,8 @@ export default class ChildConnection {
         this.emitter.emit(`message/${type}`, message);
         this.emitter.emit('message/*', message);
       });
+
+      this.emitter.emit('connected');
     } catch (error) {
       logger.error('CONNECTION_ERROR', error);
     }
