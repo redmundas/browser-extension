@@ -2,7 +2,7 @@ import { getContext as getCtx } from 'svelte';
 import { type Readable, readable } from 'svelte/store';
 
 import Connection from '../../comms/child';
-import type { Bookmark, Components, Permissions } from '../../store';
+import type { Bookmark, Components, Permissions, Snippet } from '../../store';
 import { ReadableStore as Store } from '../../store';
 
 /**
@@ -14,6 +14,7 @@ export type Context = {
   components: Readable<Components>;
   permissions: Readable<Permissions>;
   port: Connection;
+  snippets: Readable<Snippet[]>;
 };
 
 type Keys = keyof Context;
@@ -46,6 +47,13 @@ export async function makeContext(name: string, keys: Keys[] = []) {
         features.permissions = readable(store.permissions, (set) => {
           store.subscribe<Permissions>('permissions', (value) => {
             set(value);
+          });
+        });
+      }
+      if (keys.includes('snippets')) {
+        features.snippets = readable(store.snippets.toReversed(), (set) => {
+          store.subscribe<Snippet[]>('snippets', (value = []) => {
+            set(value.toReversed());
           });
         });
       }

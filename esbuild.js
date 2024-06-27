@@ -17,15 +17,17 @@ const options = {
   bundle: true,
   entryPoints: [
     'src/content/main.ts',
+    'src/devtools.ts',
     'src/newtab/main.ts',
     'src/panel/main.ts',
     'src/popup/main.ts',
     'src/widget/main.ts',
-    'src/devtools.ts',
     'src/worker.ts',
   ],
+  format: 'iife',
   target: ['esnext'],
   loader: {
+    '.gif': 'dataurl',
     '.png': 'dataurl',
     '.svg': 'text',
   },

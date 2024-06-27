@@ -38,6 +38,9 @@ async function start() {
   panel.addListener<{ id: string }>(async ({ data }) => {
     await store.removeBookmark(data.id);
   }, 'remove_bookmark');
+  panel.addListener<{ id: string }>(async ({ data }) => {
+    await store.removeSnippet(data.id);
+  }, 'remove_snippet');
 
   // listen for messages from popup
   popup.addListener<{ name: Permission }>(async ({ data }) => {
@@ -54,7 +57,7 @@ async function start() {
     }
   }, 'toggle_component');
 
-  // listed for messages in store
+  // listen for components updates
   store.subscribe<Components>('components', async (newComponents, oldComponents) => {
     if (oldComponents.widget !== newComponents.widget) {
       await toggleWidget(ctx);
@@ -97,9 +100,10 @@ async function start() {
     await store.revokePermissions(names);
   });
 
-  addEventListener('menu_clicked', async ({ info }) => {
-    if (info.menuItemId === 'toggle_widget') {
-      await store.toggleComponent('widget');
+  addEventListener('menu_clicked', async ({ info, tab }) => {
+    if (info.menuItemId === 'save_snippet') {
+      if (!(tab && info.selectionText)) return;
+      await store.addSnippet(tab, info.selectionText);
     }
   });
 }
@@ -114,7 +118,7 @@ async function toggleBadge({ store }: Context) {
 
 async function toggleMenu({ store }: Context) {
   if (store.components.menu) {
-    await createContextMenu([{ id: 'toggle_widget', title: 'Toggle widget' }]);
+    await createContextMenu([{ id: 'save_snippet', title: 'Save snippet', contexts: ['page', 'selection'] }]);
   } else {
     await removeContextMenu();
   }

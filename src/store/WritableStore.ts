@@ -23,6 +23,20 @@ export default class WritableStore extends ReadableStore {
     await this.persistBookmarks();
   }
 
+  public async addSnippet(tab: browser.Tabs.Tab, content: string) {
+    this._snippets.push({ id: uuid(), content, title: tab.title, url: tab.url! });
+    await this.persistSnippets();
+  }
+
+  public async removeSnippet(id: string) {
+    const i = this._snippets.findIndex((b) => b.id === id);
+    if (i < 0) {
+      return;
+    }
+    this._snippets.splice(i, 1);
+    await this.persistSnippets();
+  }
+
   public async enableComponent(name: Component) {
     this._components[name] = true;
     await this.persistComponents();
@@ -85,5 +99,9 @@ export default class WritableStore extends ReadableStore {
 
   private async persistPermissions() {
     await this.engine.set({ permissions: this._permissions });
+  }
+
+  private async persistSnippets() {
+    await this.engine.set({ snippets: this._snippets });
   }
 }
