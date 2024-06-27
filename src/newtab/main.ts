@@ -6,7 +6,7 @@ import App from './App.svelte';
 start();
 
 async function start() {
-  const context = await makeContext('newtab', ['permissions']);
+  const context = await makeContext('newtab', ['permissions', 'settings']);
 
   new App({
     context,

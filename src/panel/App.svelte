@@ -12,7 +12,7 @@
   ];
 
   const tab = writable(localStorage.getItem('active_tab') ?? 'bookmarks');
-  const { port } = getContext();
+  const { port, settings } = getContext();
   port.addListener(() => {
     window.close();
   }, 'close_window');
@@ -22,7 +22,7 @@
   });
 </script>
 
-<main class="w-full h-full p-4 flex flex-col gap-y-2">
+<main class="w-full h-full p-4 flex flex-col gap-y-2 hover:blur-none" class:blur-sm={$settings.privacy}>
   <Tabs items={tabs} bind:value={$tab} />
   {#if $tab === 'bookmarks'}
     <Bookmarks />

@@ -6,7 +6,7 @@ import App from './App.svelte';
 start();
 
 async function start() {
-  const context = await makeContext('panel', ['bookmarks', 'port', 'snippets']);
+  const context = await makeContext('panel', ['bookmarks', 'port', 'settings', 'snippets']);
 
   new App({
     context,

@@ -9,7 +9,7 @@
   import { faviconUrl } from '../libs/utils';
 
   const entries = writable<Array<browser.History.HistoryItem>>([]);
-  const { permissions } = getContext();
+  const { permissions, settings } = getContext();
 
   async function onRequestHistory() {
     await requestPermissions({ permissions: ['history'] });
@@ -23,7 +23,7 @@
 
 <main class="w-full h-full flex items-center justify-center text-sm">
   {#if $permissions.history}
-    <div class="w-96 flex flex-col gap-y-2">
+    <div class="w-96 flex flex-col gap-y-2 hover:blur-none" class:blur-sm={$settings.privacy}>
       <h3 class="font-semibold">Top Visits</h3>
       <div class="w-full border rounded-lg p-4 flex flex-col gap-y-3">
         {#each $entries as { title, url, visitCount }}

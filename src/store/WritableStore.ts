@@ -89,6 +89,11 @@ export default class WritableStore extends ReadableStore {
     await this.persistPermissions();
   }
 
+  public async togglePrivacy() {
+    this._settings.privacy = !this._settings.privacy;
+    await this.persistSettings();
+  }
+
   private async persistBookmarks() {
     await this.engine.set({ bookmarks: this._bookmarks });
   }
@@ -99,6 +104,10 @@ export default class WritableStore extends ReadableStore {
 
   private async persistPermissions() {
     await this.engine.set({ permissions: this._permissions });
+  }
+
+  private async persistSettings() {
+    await this.engine.set({ settings: this._settings });
   }
 
   private async persistSnippets() {
