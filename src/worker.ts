@@ -56,6 +56,11 @@ async function start() {
       await store.toggleComponent(data.name);
     }
   }, 'toggle_component');
+  popup.addListener<{ name: string }>(async ({ data }) => {
+    if (data.name === 'privacy') {
+      await store.togglePrivacy();
+    }
+  }, 'toggle_settings');
 
   // listen for components updates
   store.subscribe<Components>('components', async (newComponents, oldComponents) => {

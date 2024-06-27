@@ -6,11 +6,12 @@
   import { removePermissions, requestPermissions } from '../libs/permissions';
   import { getContext } from '../libs/svelte/context';
 
-  const { components, permissions, port } = getContext();
+  const { components, permissions, port, settings } = getContext();
   const badge = writable($components.badge);
   const menu = writable($components.menu);
   const history = writable($permissions.history);
   const panel = writable($components.panel);
+  const privacy = writable($settings.privacy);
   const widget = writable($components.widget);
 
   async function onToggleBadge() {
@@ -30,6 +31,10 @@
     } else {
       port.postMessage('disable_component', { name: 'panel' });
     }
+  }
+
+  function onTogglePrivacy() {
+    port.postMessage('toggle_settings', { name: 'privacy' });
   }
 
   function onToggleWidget() {
@@ -65,6 +70,16 @@
       <div class="w-full flex items-center justify-between">
         <h5>Widget</h5>
         <Toggle bind:checked={$widget} on:change={onToggleWidget} />
+      </div>
+    </div>
+  </section>
+
+  <section class="w-full flex flex-col gap-y-2">
+    <h3 class="font-semibold">Settings</h3>
+    <div class="w-full flex flex-col gap-y-2">
+      <div class="w-full flex items-center justify-between">
+        <h5>Privacy</h5>
+        <Toggle bind:checked={$privacy} on:change={onTogglePrivacy} />
       </div>
     </div>
   </section>
