@@ -51,6 +51,7 @@
   "dependencies": {
     "emittery": "^1.0.3",
     "loglevel": "^1.9.1",
+    "svelte-octicons": "^18.8.0",
     "webextension-polyfill": "^0.12.0"
   }
 }

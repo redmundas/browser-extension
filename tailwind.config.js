@@ -1,5 +1,5 @@
 export default {
-  content: ['./src/**/*.{html,js,svelte,ts}', '../../libs/ui/src/**/*.{js,svelte,ts}'],
+  content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     extend: {},
   },

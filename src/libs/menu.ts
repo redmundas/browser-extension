@@ -4,25 +4,29 @@ export function removeContextMenu() {
   return browser.contextMenus.removeAll();
 }
 
-export async function createMenuEntry(id: string, title: string) {
-  await browser.contextMenus.create(
-    {
-      id,
-      type: 'normal',
-      title,
-      // contexts: ['page'],
-      // visible: true,
-      documentUrlPatterns: ['*://*/*'],
-    },
-    () => {
-      if (chrome.runtime.lastError) {
-        // context menu already created - do nothing
-      }
-    },
-  );
+export function createMenuEntry({ id, title, ...rest }: browser.Menus.CreateCreatePropertiesType) {
+  return new Promise((resolve, reject) => {
+    browser.contextMenus.create(
+      {
+        id,
+        type: 'normal',
+        title,
+        contexts: ['page'],
+        documentUrlPatterns: ['*://*/*'],
+        ...rest,
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError);
+        } else {
+          resolve(undefined);
+        }
+      },
+    );
+  });
 }
 
-export async function createContextMenu(entries: { id: string; title: string }[]) {
+export async function createContextMenu(entries: browser.Menus.CreateCreatePropertiesType[]) {
   await removeContextMenu();
-  await Promise.all(entries.map(({ id, title }) => createMenuEntry(id, title)));
+  await Promise.all(entries.map(createMenuEntry));
 }

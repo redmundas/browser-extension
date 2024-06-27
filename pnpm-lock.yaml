@@ -14,6 +14,9 @@ importers:
       loglevel:
         specifier: ^1.9.1
         version: 1.9.1
+      svelte-octicons:
+        specifier: ^18.8.0
+        version: 18.8.0
       webextension-polyfill:
         specifier: ^0.12.0
         version: 0.12.0
@@ -1379,6 +1382,9 @@ packages:
     peerDependenciesMeta:
       svelte:
         optional: true
+
+  svelte-octicons@18.8.0:
+    resolution: {integrity: sha512-f4O2u1CIOG73Dsie3rSsDkv8W1OZWlrN4sQbERgzqG7PA6Nf3UqCMXHLpXSZenZR8ypUoymWuaLcPNmquhIzVA==}
 
   svelte-preprocess@5.1.4:
     resolution: {integrity: sha512-IvnbQ6D6Ao3Gg6ftiM5tdbR6aAETwjhHV+UKGf5bHGYR69RQvF1ho0JKPcbUON4vy4R7zom13jPjgdOWCQ5hDA==}
@@ -2813,6 +2819,8 @@ snapshots:
       postcss-scss: 4.0.9(postcss@8.4.38)
     optionalDependencies:
       svelte: 4.2.18
+
+  svelte-octicons@18.8.0: {}
 
   svelte-preprocess@5.1.4(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(sass@1.77.6)(svelte@4.2.18)(typescript@5.5.2):
     dependencies:

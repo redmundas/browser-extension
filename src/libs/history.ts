@@ -5,7 +5,7 @@ export function getRecentVisits(maxResults = 10) {
 }
 
 export async function getTopVisits() {
-  const urls = await search();
+  const urls = await search({ text: '', maxResults: 1000 });
   return urls
     .filter(({ url }) => !!url)
     .toSorted((a, b) => (b.visitCount ?? 0) - (a.visitCount ?? 0))

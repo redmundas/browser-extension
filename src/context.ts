@@ -13,12 +13,12 @@ export type Context = {
 };
 
 export async function createContext() {
-  const store = await initStore();
-
   const content = new Connection('content');
   const panel = new Connection('panel');
   const popup = new Connection('popup');
   // const widget = new Connection('widget');
+
+  const store = await initStore();
 
   return { content, panel, popup, store };
 }
@@ -29,8 +29,9 @@ async function initStore() {
   const [permissions] = await Promise.all([getPermissions(['history']), store.init()]);
   const badgeText = store.components.badge ? setBadgeText('!') : Promise.resolve();
   const contextMenu = store.components.menu
-    ? createContextMenu([{ id: 'toggle_widget', title: 'Toggle widget' }])
+    ? createContextMenu([{ id: 'save_snippet', title: 'Save snippet', contexts: ['page', 'selection'] }])
     : Promise.resolve();
+
   await Promise.all([
     badgeText,
     contextMenu,
@@ -41,8 +42,6 @@ async function initStore() {
     }),
     store.setPermissions(permissions),
   ]);
-
-  await store.init();
 
   return store;
 }

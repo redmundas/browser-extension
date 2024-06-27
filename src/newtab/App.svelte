@@ -24,7 +24,7 @@
 <main class="w-full h-full flex items-center justify-center text-sm">
   {#if $permissions.history}
     <div class="w-96 flex flex-col gap-y-2">
-      <h3 class="font-semibold">Top Recent Visits</h3>
+      <h3 class="font-semibold">Top Visits</h3>
       <div class="w-full border rounded-lg p-4 flex flex-col gap-y-3">
         {#each $entries as { title, url, visitCount }}
           <a href={url} class="w-full truncate flex items-center gap-x-2">
