@@ -25,7 +25,7 @@
     "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.21.5",
+    "esbuild": "^0.23.0",
     "esbuild-plugin-clear": "^1.0.1",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-style-plugin": "^1.6.3",
